@@ -154,3 +154,15 @@ echo "To use with Node.js viewer, run: source db_visualizer/postgres.env"
 echo "To connect to the database, use one of the following commands:"
 echo "psql -h localhost -U ${DB_USER} -d ${DB_NAME} -p ${DB_PORT}"
 echo "$(cat db_connection.txt)"
+
+# Apply schema and seed if present
+if [ -f "schema.sql" ]; then
+  echo ""
+  echo "Applying schema.sql ..."
+  sudo -u postgres ${PG_BIN}/psql -p ${DB_PORT} -d ${DB_NAME} -f schema.sql >/dev/null 2>&1 && echo "✓ Schema applied" || echo "⚠ Failed to apply schema (check logs)"
+fi
+
+if [ -f "seed.sql" ]; then
+  echo "Applying seed.sql ..."
+  sudo -u postgres ${PG_BIN}/psql -p ${DB_PORT} -d ${DB_NAME} -f seed.sql >/dev/null 2>&1 && echo "✓ Seed data applied" || echo "⚠ Failed to apply seed (check logs)"
+fi
